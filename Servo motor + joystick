@@ -1,0 +1,19 @@
+// This program uses a joystick to control a servo motor
+// The main theme is analog input controlling digital output
+
+#include <Servo.h> // Include the Servo library
+
+Servo myservo;  // Create a Servo object
+
+int potpin = 0; // Define the analog pin for the joystick
+int val;        // Define a variable to store the joystick value
+void setup() {
+  myservo.attach(9);  // Attach the servo to pin 9
+}
+
+void loop() {
+  val = analogRead(potpin); // Read the joystick value from the analog pin
+  val = map(val, 0, 1023, 0, 180); // Map the joystick value to the servo angle range
+  myservo.write(val); // Write the servo angle to the servo object
+  delay(15); // Wait for 15 milliseconds
+}

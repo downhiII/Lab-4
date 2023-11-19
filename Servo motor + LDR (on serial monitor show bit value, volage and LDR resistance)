@@ -1,0 +1,37 @@
+// This program is to control the servo motor with a light-dependent resistor (LDR) and print out the voltage, bit value and resistance of the LDR on the serial monitor
+// The main theme is analog input controlling digital output
+
+#include <Servo.h> // Include the Servo library
+
+Servo myservo;  // Create a Servo object
+
+int potpin = 0; // Define the analog pin for the LDR
+int val; // Declare a variable to store the analog value
+int read; // Declare a variable to store the raw reading
+float voltage; // Declare a variable to store the voltage
+float amp; // Declare a variable to store the current
+float amp2; // Declare a variable to store the current in amps
+float resistor; // Declare a variable to store the resistance
+void setup() {
+  myservo.attach(9);  // Attach the servo to pin 9
+  Serial.begin(9600); // Start the serial communication at 9600 baud rate
+}
+
+void loop() {
+  val = analogRead(potpin); // Read the analog value from the LDR
+  val = map(val, 0, 1023, 0, 180); // Map the value from 0-1023 to 0-180
+  myservo.write(val); // Write the mapped value to the servo
+  read = analogRead(potpin); // Read the raw value from the LDR
+
+  voltage = read * (5.0/1023.0); // Calculate the voltage using the formula V = R * (5/1023)
+  amp = (5 - voltage); // Calculate the current using the formula I = V / R
+  amp2 = amp / 10000; // Convert the current from milliamps to amps
+  resistor = voltage / amp2; // Calculate the resistance using the formula R = V / I
+  Serial.print ("Bitvalue = "); // Print the label for the bit value
+  Serial.println(read); // Print the bit value
+  Serial.print("Voltage = "); // Print the label for the voltage
+  Serial.println(voltage); // Print the voltage
+  Serial.print("Resistance = "); // Print the label for the resistance
+  Serial.println(resistor); // Print the resistance
+  delay(1000); // Wait for 1000 milliseconds
+}

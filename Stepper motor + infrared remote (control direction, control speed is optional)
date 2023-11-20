@@ -1,0 +1,41 @@
+// This program controls a stepper motor using the ULN2003 motor driver module with an IR remote and an IR receiver.
+// The main theme is digital input (IR remote) controlling digital output (stepper motor).
+
+
+#include <Stepper.h> // Include the Arduino Stepper Library
+#include <IRremote.h> // Include the IR Remote Library
+
+// Define Constants
+const float SPR = 32; // Number of steps per internal motor revolution
+const float GR = 64; // Amount of gear reduction
+const float SPOR = SPR * GR; // Number of steps per geared output rotation
+const int IR_PIN = 4; // Digital pin connected to the IR receiver
+int StepsR; // Variable to store the required steps for the motor movement
+
+Stepper steppermotor(SPR, 8, 10, 9, 11); // Create a Stepper object
+IRrecv irrecv(IR_PIN); // Create an IR receiver object
+
+void setup() {
+  Serial.begin(9600); // Initialize serial communication for debugging
+  irrecv.enableIRIn(); // Enable IR receiver
+}
+
+void loop() {
+  if (irrecv.decode()) {
+    switch (irrecv.decodedIRData.decodedRawData) {
+      case 0xBB44FF00: // IR code for button 1
+        StepsR = -SPOR / 2; // Set negative steps for motor movement (backward)
+        steppermotor.setSpeed(700); // Set motor speed
+        steppermotor.step(StepsR); // Move the motor
+        break;
+      case 0xBC43FF00: // IR code for button 2
+        StepsR = SPOR / 2; // Set positive steps for motor movement (forward)
+        steppermotor.setSpeed(700); // Set motor speed
+        steppermotor.step(StepsR); // Move the motor
+        break;
+      default:
+        break;
+    }
+    irrecv.resume(); // Receive the next IR signal
+  }
+}

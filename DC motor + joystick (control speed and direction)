@@ -1,0 +1,32 @@
+// This program uses a joystick to control the speed and direction of a DC motor using an L293D motor driver.
+// The main theme is analog input controlling digital output.
+
+int joystick = 0; // Analog pin connected to the joystick
+int D1 = 9;       // Digital pin for IN2
+int D2 = 10;      // Digital pin for IN1
+
+int motor;        // Variable to store the joystick value
+
+void setup() {
+  pinMode(D1, OUTPUT); // Set D1 as an output pin 
+  pinMode(D2, OUTPUT); // Set D2 as an output pin
+  Serial.begin(9600);  // Initialize serial communication
+}
+
+void loop() {
+  motor = analogRead(joystick); // Read the joystick value from the analog pin
+
+  // Determine motor direction and speed
+  if (motor > 255) {
+    digitalWrite(D2, LOW); // Turn off backward direction
+    analogWrite(D1, motor - 256); // Set forward speed
+  } else if (motor < 255) {
+    digitalWrite(D1, LOW); // Turn off forward direction
+    analogWrite(D2, 255 - motor); // Set backward speed
+  } else {
+    digitalWrite(D1, LOW); // Turn off both directions
+    digitalWrite(D2, LOW);
+  }
+
+  Serial.println(motor); // Print the joystick value 
+}

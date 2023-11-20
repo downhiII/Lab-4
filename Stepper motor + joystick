@@ -1,0 +1,31 @@
+// This program controls a stepper motor using the ULN2003 motor driver module with a joystick.
+// The main theme is analog input controlling digital output.
+
+// Include the Arduino Stepper Library
+#include <Stepper.h>
+
+// Define Constants
+const float STEPS_PER_REV = 32; // Number of steps per internal motor revolution
+const float GEAR_RED = 64; // Amount of gear reduction
+const float STEPS_PER_OUT_REV = STEPS_PER_REV * GEAR_RED; // Number of steps per geared output rotation
+
+int StepsRequired; // Variable to store the required steps for the motor movement
+int joy = 0; // Analog pin connected to the joystick
+int read; // Variable to store the joystick value
+Stepper steppermotor(STEPS_PER_REV, 8, 10, 9, 11); // Create a Stepper object
+
+void setup() {
+  Serial.begin(9600); // Initialize serial communication
+}
+
+void loop() {
+  read = analogRead(joy); // Read the joystick value from the analog pin
+  Serial.println(read); // Print the joystick 
+
+  // Determine motor movement based on joystick value
+  if (read > 520) {
+    StepsRequired = STEPS_PER_OUT_REV / 2; // Set steps for motor movement
+    steppermotor.setSpeed(700); // Set motor speed
+    steppermotor.step(StepsRequired); // Move the motor
+  }
+}
